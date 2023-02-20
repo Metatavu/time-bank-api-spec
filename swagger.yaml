@@ -223,12 +223,12 @@ paths:
       tags:
         - TimeEntries
       requestBody:
-        description: Optional description in *Markdown*
+        description: Deleted time entry from
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TimeEntryDeletedEvent'
+              $ref: '#/components/schemas/WebhookEvent'
       responses:
         '200':
           description: Webhook notification processed successfully.
@@ -238,6 +238,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+
 
   /v1/synchronize:
     post:
@@ -294,14 +295,14 @@ paths:
         - name: before
           required: false
           in: query
-          description: Retrieve time entries before given date.
+          description: Last day that timeEntrys will be included format yyyy-mm-dd
           schema:
             type: string
             format: date
         - name: after
           required: false
           in: query
-          description: Retrieve time entries after given date.
+          description: First day that timeEntrys will be included format yyyy-mm-dd
           schema:
             type: string
             format: date
@@ -599,29 +600,36 @@ components:
           type: boolean
           description: Is time entry vacation or not
 
-    TimeEntryDeletedEvent:
+    WebhookEvent:
       type: object
-      description: Person's single time entry
+      properties:
+        timestamp:
+          type: string
+          example: 2021-09-23T07:30:00Z
+          description: String. A UTC timestamp of when the event happened
+        event:
+          type: string
+          example: task_updated
+          description: String. A string consisting of the type of object and the type of event.
+        object:
+          $ref: '#/components/schemas/WebhookObject'
+        person:
+          $ref: '#/components/schemas/WebhookPerson'
+    WebhookObject:
+      type: object
       required:
         - id
-        - deleted_at
-        - project_id
-        - task_id
-        - resource_id
-        - hours
-        - description
       properties:
         id:
           type: integer
-        deleted_at:
-          type: string
-        project_id:
+          format: int32
+          example: 1
+          description: Integer. The id of the object in question.
+    WebhookPerson:
+      type: object
+      properties:
+        id:
           type: integer
-        task_id:
-          type: integer
-        resource_id:
-          type: integer
-        hours:
-          type: integer
-        description:
-          type: string
+          format: int32
+          example: 1
+          description: Integer. The id of the person who triggered the event in Forecast
