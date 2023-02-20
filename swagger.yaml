@@ -215,6 +215,30 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
 
+  /v1/timeEntriesDelete/webhook:
+    post:
+      operationId: TimeEntriesDeleteWebhook
+      summary: Handle deleted time entries from Forecast API
+      description: This endpoint handles webhook notifications from Forecast.it API when a time entry is deleted. It extracts the ID of the deleted time entry and deletes the corresponding entry in Timebank
+      tags:
+        - TimeEntries
+      requestBody:
+        description: Optional description in *Markdown*
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TimeEntryDeletedEvent'
+      responses:
+        '200':
+          description: Webhook notification processed successfully.
+        "default":
+          description: Invalid request was sent to the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
   /v1/synchronize:
     post:
       operationId: synchronizeTimeEntries
@@ -574,3 +598,30 @@ components:
         isVacation:
           type: boolean
           description: Is time entry vacation or not
+
+    TimeEntryDeletedEvent:
+      type: object
+      description: Person's single time entry
+      required:
+        - id
+        - deleted_at
+        - project_id
+        - task_id
+        - resource_id
+        - hours
+        - description
+      properties:
+        id:
+          type: integer
+        deleted_at:
+          type: string
+        project_id:
+          type: integer
+        task_id:
+          type: integer
+        resource_id:
+          type: integer
+        hours:
+          type: integer
+        description:
+          type: string
