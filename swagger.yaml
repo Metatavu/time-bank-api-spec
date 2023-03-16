@@ -222,6 +222,13 @@ paths:
       description: This endpoint handles webhook notifications from Forecast.it API when a time entry is deleted. It extracts the ID of the deleted time entry and deletes the corresponding entry in Timebank
       tags:
         - TimeEntries
+      parameters:
+        - in: query
+          name: forecastDeleteWebhookKey
+          required: false
+          schema:
+            type: string
+          description: key
       requestBody:
         description: Deleted time entry from Forecast will be deleted from time bank
         required: true
