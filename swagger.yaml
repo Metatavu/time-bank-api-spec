@@ -222,13 +222,6 @@ paths:
       description: This endpoint handles webhook notifications from Forecast.it API when a time entry is deleted. It extracts the ID of the deleted time entry and deletes the corresponding entry in Timebank
       tags:
         - TimeEntries
-      parameters:
-        - name: "X-FORECAST-API-KEY"
-          in: "header"
-          description: "The secret used to authenticate the request"
-          required: true
-          schema:
-            type: string
       requestBody:
         description: Deleted time entry from Forecast will be deleted from time bank
         required: true
@@ -279,6 +272,51 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
 
+  /v1/synchronizeDeletions:
+    post:
+      operationId: synchronizeDeletedTimeEntries
+      summary: Synchronizes time entries from Forecast API and Time bank API.
+      description: Synchronizes time entries from Forecast API and Time bank API.
+      tags:
+        - Synchronize
+      parameters:
+        - name: personId
+          required: false
+          in: query
+          description: Filter by persons unique ID
+          schema:
+            type: integer
+            format: int32
+        - name: before
+          required: false
+          in: query
+          description: Retrieve time entries before given date.
+          schema:
+            type: string
+            format: date
+        - name: after
+          required: false
+          in: query
+          description: Retrieve time entries after given date.
+          schema:
+            type: string
+            format: date
+        - name: vacation
+          required: false
+          in: query
+          description: Filter vacations
+          schema:
+            type: boolean
+      responses:
+        "204":
+          description: Synchronizes time entries from Forecast API and Time bank API.
+        "default":
+          description: Invalid request was sent to the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
   /v1/persons/{personId}/total:
     get:
       operationId: listPersonTotalTime
@@ -302,14 +340,14 @@ paths:
         - name: before
           required: false
           in: query
-          description: Last day that timeEntrys will be included format yyyy-mm-dd
+          description: Retrieve time entries before given date.
           schema:
             type: string
             format: date
         - name: after
           required: false
           in: query
-          description: First day that timeEntrys will be included format yyyy-mm-dd
+          description: Retrieve time entries after given date.
           schema:
             type: string
             format: date
