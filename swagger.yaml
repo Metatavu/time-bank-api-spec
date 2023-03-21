@@ -287,13 +287,6 @@ paths:
       tags:
         - Synchronize
       parameters:
-        - name: personId
-          required: false
-          in: query
-          description: Filter by persons unique ID
-          schema:
-            type: integer
-            format: int32
         - name: before
           required: false
           in: query
@@ -308,12 +301,6 @@ paths:
           schema:
             type: string
             format: date
-        - name: vacation
-          required: false
-          in: query
-          description: Filter vacations
-          schema:
-            type: boolean
       responses:
         "204":
           description: Synchronizes time entries from Forecast API and Time bank API.
