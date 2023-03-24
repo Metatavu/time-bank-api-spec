@@ -215,27 +215,27 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
 
-  /v1/ForecastTimeEntriesDeleteWebhook:
+  /v1/forecastWebhook:
     post:
-      operationId: ForecastTimeEntriesDeleteWebhook
+      operationId: forecastWebhook
       summary: Handle deleted time entries from Forecast API
-      description: This endpoint handles webhook notifications from Forecast.it API when a time entry is deleted. It extracts the ID of the deleted time entry and deletes the corresponding entry in Timebank
+      description: This endpoint handles webhook notifications from Forecast.it API
       tags:
-        - TimeEntries
+        - ForecastWebhook
       parameters:
         - in: query
-          name: forecastDeleteWebhookKey
+          name: forecastWebhookKey
           required: false
           schema:
             type: string
-          description: key
+          description: key to verify origin of request
       requestBody:
-        description: Deleted time entry from Forecast will be deleted from time bank
+        description: Webhook content
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ForecastDeleteWebhookEvent'
+              $ref: '#/components/schemas/ForecastWebhookEvent'
       responses:
         '200':
           description: Webhook notification processed successfully.
@@ -269,41 +269,16 @@ paths:
           schema:
             type: string
             format: date
+        - name: syncDeleted
+          required: false
+          in: query
+          description: Synchronizes deleted time entries
+          schema:
+            type: boolean
+            default: false
       responses:
         "204":
           description: Synchronized time entries from Forecast API.
-        "default":
-          description: Invalid request was sent to the server.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-
-  /v1/synchronizeDeletions:
-    post:
-      operationId: synchronizeDeletedTimeEntries
-      summary: Synchronizes time entries from Forecast API and Time bank API.
-      description: Synchronizes time entries from Forecast API and Time bank API.
-      tags:
-        - Synchronize
-      parameters:
-        - name: before
-          required: false
-          in: query
-          description: Retrieve time entries before given date.
-          schema:
-            type: string
-            format: date
-        - name: after
-          required: false
-          in: query
-          description: Retrieve time entries after given date.
-          schema:
-            type: string
-            format: date
-      responses:
-        "204":
-          description: Synchronizes time entries from Forecast API and Time bank API.
         "default":
           description: Invalid request was sent to the server.
           content:
@@ -639,7 +614,7 @@ components:
           type: boolean
           description: Is time entry vacation or not
 
-    ForecastDeleteWebhookEvent:
+    ForecastWebhookEvent:
       type: object
       properties:
         timestamp:
@@ -651,11 +626,11 @@ components:
           example: task_deleted
           description: String. A string consisting of the type of object and the type of event.
         object:
-          $ref: '#/components/schemas/ForecastDeleteWebhookObject'
+          $ref: '#/components/schemas/ForecastWebhookObject'
         person:
-          $ref: '#/components/schemas/ForecastDeleteWebhookPerson'
+          $ref: '#/components/schemas/ForecastWebhookPerson'
 
-    ForecastDeleteWebhookObject:
+    ForecastWebhookObject:
       type: object
       required:
         - id
@@ -666,7 +641,7 @@ components:
           example: 1
           description: Integer. The id of the object in question.
 
-    ForecastDeleteWebhookPerson:
+    ForecastWebhookPerson:
       type: object
       properties:
         id:
