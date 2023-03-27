@@ -216,7 +216,7 @@ paths:
                 $ref: "#/components/schemas/Error"
 
   /v1/forecastWebhook:
-    delete:
+    post:
       operationId: forecastWebhook
       summary: Handle deleted time entries from Forecast API
       description: This endpoint handles webhook notifications from Forecast.it API
