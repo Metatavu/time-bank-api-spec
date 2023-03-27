@@ -225,10 +225,10 @@ paths:
       parameters:
         - in: query
           name: forecastWebhookKey
-          required: false
+          required: true
           schema:
             type: string
-          description: key to verify origin of request
+          description: key to authenticate incoming webhooks
       requestBody:
         description: Webhook content
         required: true
@@ -237,7 +237,7 @@ paths:
             schema:
               $ref: '#/components/schemas/ForecastWebhookEvent'
       responses:
-        '200':
+        '204':
           description: Webhook notification processed successfully.
         "default":
           description: Invalid request was sent to the server.
@@ -270,7 +270,7 @@ paths:
             type: string
             format: date
         - name: syncDeleted
-          required: false
+          required: true
           in: query
           description: Synchronizes deleted time entries
           schema:
