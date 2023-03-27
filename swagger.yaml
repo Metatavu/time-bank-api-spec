@@ -3,70 +3,346 @@ info:
   title: Timebank
   description: Timebank API documentation
   version: '1.0'
-  contact: {}
-tags: []
-servers: []
+
+security:
+  - bearerAuth: []
+
+paths:
+  /v1/system/ping:
+    get:
+      operationId: ping
+      summary: Replies with pong
+      description: Replies ping with pong
+      tags:
+        - System
+      responses:
+        "200":
+          description: Pong
+          content:
+            text/plain:
+              schema:
+                type: string
+
+  /v1/persons:
+    get:
+      operationId: listPersons
+      summary: Get list of Timebank persons.
+      description: Get list of Timebank persons.
+      tags:
+        - Persons
+      parameters:
+        - name: active
+          in: query
+          description: Filter by persons active state
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Get list of Timebank persons.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Person"
+        "default":
+          description: Invalid request was sent to the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /v1/persons/{personId}:
+    put:
+      operationId: updatePerson
+      summary: Updates Person attributes.
+      description: Updates Person attributes in Keycloak.
+      tags:
+        - Persons
+      parameters:
+        - name: personId
+          in: path
+          required: true
+          description: personId
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Person'
+
+      responses:
+        "200":
+          description: Updated Person information.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Person'
+        "default":
+          description: Invalid request was sent to the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /v1/dailyEntries:
+    get:
+      operationId: listDailyEntries
+      summary: Lists daily entries.
+      description: Lists daily entries.
+      tags:
+        - DailyEntries
+      parameters:
+        - name: personId
+          required: false
+          in: query
+          description: Filter by persons unique ID
+          schema:
+            type: integer
+            format: int32
+        - name: before
+          required: false
+          in: query
+          description: Retrieve daily entries before given date.
+          schema:
+            type: string
+            format: date
+        - name: after
+          required: false
+          in: query
+          description: Retrieve daily entries after given date.
+          schema:
+            type: string
+            format: date
+        - name: vacation
+          required: false
+          in: query
+          description: Filter vacations
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: List of daily entries.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DailyEntry'
+        "default":
+          description: Invalid request was sent to the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /v1/timeEntries:
+    get:
+      operationId: listTimeEntries
+      summary: Lists time entries.
+      description: Lists time entries.
+      tags:
+        - TimeEntries
+      parameters:
+        - name: personId
+          required: false
+          in: query
+          description: Filter by persons unique ID
+          schema:
+            type: integer
+            format: int32
+        - name: before
+          required: false
+          in: query
+          description: Retrieve time entries before given date.
+          schema:
+            type: string
+            format: date
+        - name: after
+          required: false
+          in: query
+          description: Retrieve time entries after given date.
+          schema:
+            type: string
+            format: date
+        - name: vacation
+          required: false
+          in: query
+          description: Filter vacations
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: List of time entries.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TimeEntry'
+        "default":
+          description: Invalid request was sent to the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /v1/timeEntries/{id}:
+    delete:
+      operationId: deleteTimeEntry
+      summary: Delete a time entry.
+      description: Deletes a time entry.
+      tags:
+        - TimeEntries
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: TimeEntry id
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "204":
+          description: Empty response indicating successful removal.
+        "default":
+          description: Invalid request was sent to the server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /v1/synchronize:
+    post:
+      operationId: synchronizeTimeEntries
+      summary: Synchronizes time entries from Forecast API.
+      description: Retrieves and synchronizes time entries from Forecast API.
+      tags:
+        - Synchronize
+      parameters:
+        - name: before
+          required: false
+          in: query
+          description: Synchronizes before given date.
+          schema:
+            type: string
+            format: date
+        - name: after
+          required: false
+          in: query
+          description: Synchronizes after given date.
+          schema:
+            type: string
+            format: date
+      responses:
+        "204":
+          description: Synchronized time entries from Forecast API.
+        "default":
+          description: Invalid request was sent to the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /v1/persons/{personId}/total:
+    get:
+      operationId: listPersonTotalTime
+      summary: Lists persons total time entries.
+      description: Lists persons total time entries.
+      tags:
+        - Persons
+      parameters:
+        - name: personId
+          required: true
+          in: path
+          schema:
+            type: integer
+            format: int32
+        - name: timespan
+          required: false
+          in: query
+          description: Default value is ALL_TIME.
+          schema:
+            $ref: "#/components/schemas/Timespan"
+        - name: before
+          required: false
+          in: query
+          description: Retrieve time entries before given date.
+          schema:
+            type: string
+            format: date
+        - name: after
+          required: false
+          in: query
+          description: Retrieve time entries after given date.
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: |-
+            When getting total from all the time,
+                              _id field will be null, otherwise it will be
+                              combination of year and month or year and week
+                              depending on timespan parameter
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PersonTotalTime"
+        "default":
+          description: Invalid request was sent to the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
 components:
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
   schemas:
-    PersonDto:
+
+    Error:
       type: object
+      description: Error object
+      required:
+        - code
+        - message
       properties:
-        id:
-          type: number
-        first_name:
+        code:
+          type: integer
+          format: int32
+          description: Error code
+        message:
           type: string
-        last_name:
-          type: string
-        email:
-          type: string
-        user_type:
-          type: string
-        client_id:
-          type: number
-        holiday_calendar_id:
-          type: number
-        monday:
-          type: number
-        tuesday:
-          type: number
-        wednesday:
-          type: number
-        thursday:
-          type: number
-        friday:
-          type: number
-        saturday:
-          type: number
-        sunday:
-          type: number
-        active:
-          type: boolean
-        default_role:
-          type: number
-        cost:
-          type: number
-        language:
-          type: string
-        created_by:
-          type: number
-        updated_by:
-          type: number
-        created_at:
-          format: date-time
-          type: string
-        updated_at:
-          format: date-time
-          type: string
-        start_date:
-          type: string
+          description: Error message
+
+    Timespan:
+      type: string
+      description: Enum for timespan
+      enum:
+        - ALL_TIME
+        - YEAR
+        - MONTH
+        - WEEK
+
+    Person:
+      type: object
+      description: Person Data from Forecast API
       required:
         - id
-        - first_name
-        - last_name
+        - firstName
+        - lastName
         - email
-        - user_type
-        - client_id
-        - holiday_calendar_id
         - monday
         - tuesday
         - wednesday
@@ -75,183 +351,226 @@ components:
         - saturday
         - sunday
         - active
-        - default_role
-        - cost
-        - language
-        - created_by
-        - updated_by
-        - created_at
-        - updated_at
-        - start_date
-    TimeEntry:
-      type: object
+        - unspentVacations
+        - spentVacations
+        - minimumBillableRate
       properties:
-        externalId:
+        id:
+          type: integer
+          format: int32
+          description: Person ID in Forecast.
+        firstName:
           type: string
-        person:
-          type: number
-        internalTime:
-          type: number
-        projectTime:
-          type: number
-        logged:
-          type: number
-        expected:
-          type: number
-        total:
-          type: number
-        date:
-          format: date-time
+          description: Person first name.
+        lastName:
           type: string
+          description: Person last name.
+        email:
+          type: string
+          description: Person email.
+        monday:
+          type: integer
+          format: int32
+          description: Persons expected working hours in minutes.
+        tuesday:
+          type: integer
+          format: int32
+          description: Persons expected working hours in minutes.
+        wednesday:
+          type: integer
+          format: int32
+          description: Persons expected working hours in minutes.
+        thursday:
+          type: integer
+          format: int32
+          description: Persons expected working hours in minutes.
+        friday:
+          type: integer
+          format: int32
+          description: Persons expected working hours in minutes.
+        saturday:
+          type: integer
+          format: int32
+          description: Persons expected working hours in minutes.
+        sunday:
+          type: integer
+          format: int32
+          description: Persons expected working hours in minutes.
+        active:
+          type: boolean
+          description: Defining is person active e.g. is employeed.
+        language:
+          type: string
+          description: Persons language
+        startDate:
+          type: string
+          description: Start date of employment, String.
+        unspentVacations:
+          type: integer
+          format: int32
+          description: Amount of unspent vacations from last year.
+        spentVacations:
+          type: integer
+          format: int32
+          description: Amount of spent vacations from last year.
+        minimumBillableRate:
+          type: integer
+          format: int32
+          description: Persons minimum billable rate
+
+    DailyEntry:
+      type: object
+      description: Person's daily entry
       required:
-        - externalId
         - person
         - internalTime
-        - projectTime
+        - billableProjectTime
+        - nonBillableProjectTime
         - logged
+        - loggedProjectTime
         - expected
-        - total
+        - balance
         - date
-    TimeEntryTotalId:
-      type: object
+        - isVacation
       properties:
-        year:
-          type: number
-        month:
-          type: number
-        week:
-          type: number
-    TimeEntryTotalDto:
-      type: object
-      properties:
-        _id:
-          $ref: '#/components/schemas/TimeEntryTotalId'
-        total:
-          type: number
-        logged:
-          type: number
-        expected:
-          type: number
+        person:
+          type: integer
+          format: int32
+          description: Person ID in Forecast
         internalTime:
-          type: number
-        projectTime:
-          type: number
+          type: integer
+          format: int32
+          description: Amount of internal time per daily entry
+        billableProjectTime:
+          type: integer
+          format: int32
+          description: Amount of billable project time per daily entry
+        nonBillableProjectTime:
+          type: integer
+          format: int32
+          description: Amount of non billable project time per daily entry
+        logged:
+          type: integer
+          format: int32
+          description: Amount of time logged per daily entry
+        loggedProjectTime:
+          type: integer
+          format: int32
+          description: Amount of project time logged per daily entry
+        expected:
+          type: integer
+          format: int32
+          description: Amount of time expected per daily entry
+        balance:
+          type: integer
+          format: int32
+          description: Total amount of worktime per daily entry
+        date:
+          type: string
+          format: date
+          description: Date of daily entry
+        isVacation:
+          type: boolean
+          description: Is daily entry vacation or not
+
+    PersonTotalTime:
+      type: object
+      description: Person's total time
       required:
-        - total
+        - balance
         - logged
+        - loggedProjectTime
         - expected
         - internalTime
-        - projectTime
-paths:
-  /timebank/persons:
-    get:
-      operationId: TimebankController_getPersons
-      parameters: []
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/PersonDto'
-      tags:
-        - timebank
-  '/timebank/entries/{personId}':
-    get:
-      operationId: TimebankController_getEntries
-      parameters:
-        - name: personId
-          required: true
-          in: path
-          schema:
-            type: string
-        - name: before
-          required: false
-          in: query
-          schema:
-            type: string
-        - name: after
-          required: false
-          in: query
-          schema:
-            type: string
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TimeEntry'
-      tags:
-        - timebank
-  /timebank/sync:
-    post:
-      operationId: TimebankController_syncWorkTime
-      parameters:
-        - name: before
-          required: false
-          in: query
-          schema:
-            type: string
-        - name: after
-          required: false
-          in: query
-          schema:
-            type: string
-      responses:
-        '200':
-          description: ''
-      tags:
-        - timebank
-  '/timebank/total/{personId}':
-    get:
-      operationId: TimebankController_getTotal
-      parameters:
-        - name: personId
-          required: true
-          in: path
-          schema:
-            type: string
-        - name: retention
-          required: false
-          in: query
-          description: Default value is ALL_TIME
-          schema:
-            enum:
-              - ALL_TIME
-              - YEAR
-              - MONTH
-              - WEEK
-            type: string
-      responses:
-        '200':
-          description: |-
-            When getting total from all the time,
-                              _id field will be null, otherwise it will be
-                              combination of year and month or year and week
-                              depending on retention parameter
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TimeEntryTotalDto'
-      tags:
-        - timebank
-  /system/ping:
-    get:
-      operationId: SystemController_getPersons
-      parameters: []
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: string
-      tags:
-        - system
+        - billableProjectTime
+        - nonBillableProjectTime
+      properties:
+        personId:
+          type: integer
+          format: int32
+        balance:
+          type: integer
+          format: int32
+          description: Difference between expected and logged time.
+        logged:
+          type: integer
+          format: int32
+          description: Total amount logged time of person.
+        loggedProjectTime:
+          type: integer
+          format: int32
+          description: Total amount of project time logged of person.
+        expected:
+          type: integer
+          format: int32
+          description: Total amount expected time of person.
+        internalTime:
+          type: integer
+          format: int32
+          description: Total amount of internal time of person.
+        billableProjectTime:
+          type: integer
+          format: int32
+          description: Total amount of billable project time of person.
+        nonBillableProjectTime:
+          type: integer
+          format: int32
+          description: Total amount of non billable project time of person.
+        timePeriod:
+          type: string
+          description: String identifying the relevant year/month/week for the requested period of time total.
+
+    TimeEntry:
+      type: object
+      description: Person's single time entry
+      required:
+        - id
+        - person
+        - internalTime
+        - billableProjectTime
+        - nonBillableProjectTime
+        - date
+        - createdAt
+        - updatedAt
+        - isVacation
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: ID of DailyEntry in UUID
+        forecastId:
+          type: integer
+          format: int32
+          nullable: true
+          description: TimeEntry ID in Forecast
+        person:
+          type: integer
+          format: int32
+          description: Person ID in Forecast
+        internalTime:
+          type: integer
+          format: int32
+          description: Amount of internal time per time entry
+        billableProjectTime:
+          type: integer
+          format: int32
+          description: Amount of billable project time per time entry
+        nonBillableProjectTime:
+          type: integer
+          format: int32
+          description: Amount of non billable project time per time entry
+        date:
+          type: string
+          format: date
+          description: Date of time entry
+        createdAt:
+          type: string
+          format: date-time
+          description: Date time of time entry registration
+        updatedAt:
+          type: string
+          format: date-time
+          description: Date time of time entry update
+        isVacation:
+          type: boolean
+          description: Is time entry vacation or not
