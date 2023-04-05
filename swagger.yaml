@@ -215,6 +215,38 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
 
+  /v1/forecastWebhook:
+    post:
+      operationId: forecastWebhook
+      summary: Handle deleted time entries from Forecast API
+      description: This endpoint handles webhook notifications from Forecast.it API
+      tags:
+        - ForecastWebhook
+      parameters:
+        - in: query
+          name: forecastWebhookKey
+          required: true
+          schema:
+            type: string
+          description: key to authenticate incoming webhooks
+      requestBody:
+        description: Webhook content
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForecastWebhookEvent'
+      responses:
+        '204':
+          description: Webhook notification processed successfully.
+        "default":
+          description: Invalid request was sent to the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+
   /v1/synchronize:
     post:
       operationId: synchronizeTimeEntries
@@ -237,6 +269,13 @@ paths:
           schema:
             type: string
             format: date
+        - name: syncDeleted
+          required: true
+          in: query
+          description: Synchronizes deleted time entries
+          schema:
+            type: boolean
+            default: false
       responses:
         "204":
           description: Synchronized time entries from Forecast API.
@@ -574,3 +613,39 @@ components:
         isVacation:
           type: boolean
           description: Is time entry vacation or not
+
+    ForecastWebhookEvent:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          example: 2021-09-23T07:30:00Z
+          description: String. A UTC timestamp of when the event happened
+        event:
+          type: string
+          example: task_deleted
+          description: String. A string consisting of the type of object and the type of event.
+        object:
+          $ref: '#/components/schemas/ForecastWebhookObject'
+        person:
+          $ref: '#/components/schemas/ForecastWebhookPerson'
+
+    ForecastWebhookObject:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: integer
+          format: int32
+          example: 1
+          description: Integer. The id of the object in question.
+
+    ForecastWebhookPerson:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          example: 1
+          description: Integer. The id of the person who triggered the event in Forecast
