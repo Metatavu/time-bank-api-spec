@@ -301,9 +301,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
 
-  /v1/Vacations:
+  /v1/vacationsRequests:
     get:
-      operationId: vacationRequests
+      operationId: listVacationRequests
       summary: List vacation requests
       description: Lists persisted vacation requests
       tags:
@@ -333,6 +333,12 @@ paths:
       responses:
         '200':
           description: List of vacation requests.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/VacationRequest'
         "default":
           description: Invalid request was sent to the server.
           content:
@@ -340,11 +346,11 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/VacationRequest'
+                  $ref: "#/components/schemas/Error"
 
-  /v1/newVacation:
+  /v1/vacationRequest:
     post:
-      operationId: NewVacationRequest
+      operationId: createVacationRequest
       summary: Post a new vacation request
       description: Add new vacation request
       tags:
@@ -361,6 +367,31 @@ paths:
           description: created new vacation request
         "default":
           description: Invalid request was sent to the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /v1/vacationRequest/{id}:
+    delete:
+      operationId: deleteVacationRequest
+      summary: Delete a vacation request.
+      description: Deletes a vacation request.
+      tags:
+        - Vacations
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: TimeEntry id
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "204":
+          description: Empty response indicating successful removal.
+        "default":
+          description: Invalid request was sent to the server
           content:
             application/json:
               schema:
@@ -399,6 +430,25 @@ components:
         - YEAR
         - MONTH
         - WEEK
+
+    VacationType:
+      type: string
+      description: Enum for vacation type
+      enum:
+        - VACATION
+        - UNPAID_TIME_OFF
+        - SICKNESS
+        - PERSONAL_DAYS
+        - MATERNITY/PATERNITY
+        - CHILD_SICKNESS
+
+    RequestStatus:
+      type: string
+      description: Enum for status
+      enum:
+        - PENDING
+        - APPROVED
+        - DECLINED
 
     Person:
       type: object
@@ -644,33 +694,52 @@ components:
       type: object
       description: Person's single vacation request
       required:
-        - id
-        - message
         - person
         - days
-        - start date
-        - end date
+        - startDate
+        - endDate
+        - type
+        - message
+        - projectManagerStatus
+        - hrManagerStatus
+        - createdAt
+        - updatedAt
       properties:
-        message:
+        id:
           type: string
-          description: Message attached to request
+          format: uuid
+          description: ID of vacation request in UUID
+          default: null
         person:
           type: integer
           format: int32
           description: Person ID in Forecast
+        startDate:
+          type: string
+          format: date
+          description: Date of vacation start
+        endDate:
+          type: string
+          format: date
+          description: Date of vacation end
         days:
           type: integer
           format: int32
           description: Vacation days used for requested vacation
-        start date:
+        type:
+          $ref: "#/components/schemas/VacationType"
+        message:
           type: string
-          format: date
-          description: Date of vacation start
-        end date:
+          description: Message attached to request
+        projectManagerStatus:
+          $ref: "#/components/schemas/RequestStatus"
+        hrManagerStatus:
+          $ref: "#/components/schemas/RequestStatus"
+        createdAt:
           type: string
-          format: date
-          description: Date of vacation end
-        status:
-          type: boolean
-          description: Status of the request (null = pending, true = approved, false = declined)
-          default: null
+          format: date-time
+          description: Date time of time entry registration
+        updatedAt:
+          type: string
+          format: date-time
+          description: Date time of time entry update
