@@ -470,25 +470,6 @@ components:
         - MONTH
         - WEEK
 
-    VacationType:
-      type: string
-      description: Enum for vacation type
-      enum:
-        - VACATION
-        - UNPAID_TIME_OFF
-        - SICKNESS
-        - PERSONAL_DAYS
-        - MATERNITY/PATERNITY
-        - CHILD_SICKNESS
-
-    RequestStatus:
-      type: string
-      description: Enum for status
-      enum:
-        - PENDING
-        - APPROVED
-        - DECLINED
-
     Person:
       type: object
       description: Person Data from Forecast API
@@ -729,6 +710,25 @@ components:
           type: boolean
           description: Is time entry vacation or not
 
+    VacationType:
+      type: string
+      description: Enum for vacation type
+      enum:
+        - VACATION
+        - UNPAID_TIME_OFF
+        - SICKNESS
+        - PERSONAL_DAYS
+        - MATERNITY/PATERNITY
+        - CHILD_SICKNESS
+
+    VacationRequestStatus:
+      type: string
+      description: Enum for status
+      enum:
+        - PENDING
+        - APPROVED
+        - DECLINED
+
     VacationRequest:
       type: object
       description: Person's single vacation request
@@ -777,11 +777,11 @@ components:
         createdAt:
           type: string
           format: date-time
-          description: Date time of time entry registration
+          description: Date time of vacation request registration
         updatedAt:
           type: string
           format: date-time
-          description: Date time of time entry update
+          description: Date time of vacation request update
 
     ForecastWebhookEvent:
       type: object
