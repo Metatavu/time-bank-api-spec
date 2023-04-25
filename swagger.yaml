@@ -849,7 +849,6 @@ components:
           type: string
           format: uuid
           description: ID of person who modified request last
-          default: null
         updatedAt:
           type: string
           format: date-time
@@ -858,7 +857,6 @@ components:
           type: string
           format: uuid
           description: ID of person who modified request last
-          default: null
 
     ForecastWebhookEvent:
       type: object
