@@ -807,9 +807,7 @@ components:
         - projectManagerStatus
         - hrManagerStatus
         - createdAt
-        - createdBy
         - updatedAt
-        - lastModifiedBy
       properties:
         id:
           type: string
