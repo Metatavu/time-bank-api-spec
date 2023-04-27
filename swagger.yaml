@@ -851,7 +851,7 @@ components:
           type: string
           format: date-time
           description: Date time of vacation request update
-        lastModifiedBy:
+        lastUpdatedBy:
           type: string
           format: uuid
           description: ID of person who modified request last
