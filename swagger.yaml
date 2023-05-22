@@ -783,7 +783,7 @@ components:
         - UNPAID_TIME_OFF
         - SICKNESS
         - PERSONAL_DAYS
-        - MATERNITY/PATERNITY
+        - MATERNITY_PATERNITY
         - CHILD_SICKNESS
 
     VacationRequestStatus:
