@@ -477,6 +477,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  /v1/vacationsRequests/{id}/{personId}:
     delete:
       operationId: deleteVacationRequest
       summary: Delete a vacation request.
@@ -491,6 +492,14 @@ paths:
           schema:
             type: string
             format: uuid
+        - name: personId
+          required: true
+          in: path
+          description: person id
+          schema:
+            type: integer
+            format: int32
+
       responses:
         "204":
           description: Empty response indicating successful removal.
@@ -631,6 +640,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  /v1/vacationsRequestStatus/{id}/{personId}:
     delete:
       operationId: deleteVacationRequestStatus
       summary: Delete a vacation request status.
@@ -645,6 +655,13 @@ paths:
           schema:
             type: string
             format: uuid
+        - name: personId
+          required: true
+          in: path
+          description: person id
+          schema:
+            type: integer
+            format: int32
       responses:
         "204":
           description: Empty response indicating successful removal.
@@ -771,10 +788,6 @@ components:
           type: integer
           format: int32
           description: Persons minimum billable rate
-        keycloakId:
-          type: string
-          format: uuid
-          description: PersonId in keycloak
 
     DailyEntry:
       type: object
@@ -995,10 +1008,6 @@ components:
           type: string
           format: date-time
           description: Date time of vacation request registration
-        createdBy:
-          type: string
-          format: uuid
-          description: ID of person who modified request last
         updatedAt:
           type: string
           format: date-time
