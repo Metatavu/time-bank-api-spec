@@ -793,6 +793,10 @@ components:
           type: integer
           format: int32
           description: Persons minimum billable rate
+        keycloakId:
+          type: string
+          format: uuid
+          description: PersonId in keycloak
 
     DailyEntry:
       type: object
