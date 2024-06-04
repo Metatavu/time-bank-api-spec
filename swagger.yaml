@@ -115,37 +115,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
 
-  /v1/slack/{message}:
-    get:
-      operationId: messageManagers
-      summary: Message all managers in slack
-      description: Message all managers in slack.
-      tags:
-        - Slack
-      parameters:
-        - name: message
-          in: path
-          required: true
-          description: message
-          schema:
-            type: string
-      responses:
-        "200":
-          description: Sent message.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  text:
-                    type: string
-        "default":
-          description: Invalid request was sent to the server.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-
   /v1/dailyEntries:
     get:
       operationId: listDailyEntries
