@@ -372,7 +372,7 @@ paths:
         - name: draft
           required: false
           in: query
-          description: Retrieve draft state
+          description: Filter Vacation Requests by draft state
           schema:
             type: boolean
       responses:
