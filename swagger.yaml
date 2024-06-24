@@ -396,6 +396,12 @@ paths:
           schema:
             type: string
             format: date
+        - name: draft
+          required: false
+          in: query
+          description: Filter Vacation Requests by draft state
+          schema:
+            type: boolean
       responses:
         '200':
           description: List of vacation requests.
@@ -1013,6 +1019,7 @@ components:
         - message
         - createdAt
         - updatedAt
+        - draft
       properties:
         id:
           type: string
@@ -1023,6 +1030,9 @@ components:
           type: string
           format: uuid
           description: Person keycloak ID in UUID
+        draft:
+          type: boolean
+          description: Draft state
         startDate:
           type: string
           format: date
