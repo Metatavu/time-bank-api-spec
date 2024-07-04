@@ -747,6 +747,7 @@ components:
     Person:
       type: object
       description: Person Data from Forecast API
+      deprecated: true
       required:
         - id
         - firstName
