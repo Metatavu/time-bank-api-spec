@@ -804,20 +804,21 @@ components:
         - MONTH
         - WEEK
 
+
     User:
       type: object
-      description: User Data from Severa API
+      description: User Data
       required:
-        - guid
+        - id
         - firstName
         - lastName
         - email
         - isActive
       properties:
-        guid:
-          type: integer
-          format: int32
-          description: Person ID in Severa.
+        id:
+          type: string
+          format: uuid
+          description: Person ID in Keycloak.
         firstName:
           type: string
           description: Person first name.
@@ -830,10 +831,14 @@ components:
         isActive:
           type: boolean
           description: Defining is person active e.g. is employed.
-        keycloakId:
-          type: string
-          format: uuid
-          description: PersonId in keycloak
+        severaGuid:
+          type: integer
+          format: int32
+          description: Persons GUID in Severa
+        forecastId:
+          type: integer
+          format: int32
+          description: Persons ID in Forecast. Used for keeping a reference of Forecast based TimeEntries and Users.
 
     Person:
       type: object
