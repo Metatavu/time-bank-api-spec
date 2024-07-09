@@ -26,19 +26,13 @@ paths:
   /v1/users:
     get:
       operationId: listUsers
-      summary: Get list of Severa users.
-      description: Get list of Severa users.
+      summary: Get list of keycloak users.
+      description: Get list of keycloak users.
       tags:
         - Users
-      parameters:
-        - name: isActive
-          in: query
-          description: Filter by users active state
-          schema:
-            type: boolean
       responses:
         "200":
-          description: Get list of Severa users
+          description: Get list of keycloak users
           content:
             application/json:
               schema:
@@ -52,7 +46,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
 
-  /v1/users/{uuid}:
+  /v1/users/{userId}:
     get:
       operationId: findUser
       summary: Find user by keycloak id
@@ -60,12 +54,13 @@ paths:
       tags:
         - Users
       parameters:
-        - name: uuid
+        - name: userId
           in: path
           required: true
-          description: keycloak uuid
+          description: Users ID in Keycloak
           schema:
             type: string
+            format: uuid
       responses:
         "200":
           description: Found User information.
@@ -115,7 +110,7 @@ paths:
       deprecated: true
       operationId: findPerson
       summary: Find person by id.
-      description: Finds person by id in Keycloak (Deprecated, use /v1/users/{guid}).
+      description: Finds person by id in Keycloak (Deprecated, use /v1/users/{userId}).
       tags:
         - Persons
       parameters:
