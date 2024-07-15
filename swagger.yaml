@@ -806,7 +806,6 @@ components:
         - id
         - firstName
         - lastName
-        - email
         - isActive
       properties:
         id:
