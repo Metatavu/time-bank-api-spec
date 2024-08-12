@@ -75,6 +75,57 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
 
+  /v1/users/{userid}/total:
+    get:
+      operationId: listUserTotalTime
+      summary: List total time for user
+      description: List total time for user by id
+      tags:
+        - Users
+        - TotalTime
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: Users ID in Keycloak
+          schema:
+            type: string
+            format: uuid
+        - name: before
+          required: false
+          in: query
+          description: Retrieve time entries before given date.
+          schema:
+            type: string
+            format: date
+        - name: after
+          required: false
+          in: query
+          description: Retrieve time entries after given date.
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: |-
+            When getting total from all the time,
+                              _id field will be null, otherwise it will be
+                              combination of year and month or year and week
+                              depending on timespan parameter
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PersonTotalTime"
+        "default":
+          description: Invalid request was sent to the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+
   /v1/persons:
     get:
       deprecated: true
@@ -803,6 +854,40 @@ components:
           type: integer
           format: int32
           description: Persons ID in Forecast. Used for keeping a reference of Forecast based TimeEntries and Users.
+
+    WorkHour:
+      type: object
+      description: User's single work hour
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: ID of DailyEntry in UUID
+        forecastId:
+          type: integer
+          format: int32
+          nullable: true
+          description: TimeEntry ID in Forecast
+        user:
+          type: string
+          format: uuid
+          description: User ID in Keycloak
+        isBillable:
+          type: boolean
+          description: Signals if the work hour is billable or not
+        eventDate:
+          type: string
+          format: date
+          description: Date of work hour
+        createdDateTime:
+          type: string
+          format: date-time
+          description: Date time of work hour registration
+        lastUpdatedDateTime:
+          type: string
+          format: date-time
+          description: Date time of last work hour update
+
 
     Person:
       type: object
