@@ -862,7 +862,7 @@ components:
         id:
           type: string
           format: uuid
-          description: ID of DailyEntry in UUID
+          description: ID of WorkHour in UUID
         forecastId:
           type: integer
           format: int32
@@ -888,6 +888,66 @@ components:
           format: date-time
           description: Date time of last work hour update
 
+    DailyWorkHours:
+      type: object
+      description: User's daily work hours
+      properties:
+        user:
+          type: string
+          format: uuid
+          description: User id in Keycloak
+        billableTime:
+          type: integer
+          format: int32
+          description: Amount of billable project time per daily entry
+        nonBillableTime:
+          type: integer
+          format: int32
+          description: Amount of non billable project time per daily entry
+        expected:
+          type: integer
+          format: int32
+          description: Amount of time expected per daily entry
+        balance:
+          type: integer
+          format: int32
+          description: Total amount of worktime per daily entry
+        date:
+          type: string
+          format: date
+          description: Date of daily work hours
+
+    UserTotalTime:
+      type: object
+      description: User's total time
+      required:
+        - balance
+        - expected
+        - billableTime
+        - nonBillableTime
+      properties:
+        userId:
+          type: string
+          format: uuid
+        balance:
+          type: integer
+          format: int32
+          description: Difference between expected and logged time.
+        expected:
+          type: integer
+          format: int32
+          description: Total amount expected time of user.
+        billableTime:
+          type: integer
+          format: int32
+          description: Total amount of billable time of user.
+        nonBillableTime:
+          type: integer
+          format: int32
+          description: Total amount of non billable time of user.
+        timePeriod:
+          type: string
+          description: String identifying the relevant year/month/week for the requested period of time total.
 
     Person:
       type: object
