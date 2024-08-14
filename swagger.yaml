@@ -908,11 +908,6 @@ components:
           type: string
           format: uuid
           description: ID of WorkHour in UUID
-        forecastId:
-          type: integer
-          format: int32
-          nullable: true
-          description: TimeEntry ID in Forecast
         user:
           type: string
           format: uuid
